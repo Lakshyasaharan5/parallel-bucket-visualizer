@@ -1,11 +1,16 @@
 import React, { useState } from "react";
 import "./App.css";
+import { DemoFlow } from "./DemoFlow"
 
 function App() {
   const [isBlue, setIsBlue] = useState(false);
 
   return (
+    <>
+    <DemoFlow />
     <div className="app-container">
+      <button onClick={() => setIsBlue(true)}>Make Blue</button>
+      <button onClick={() => setIsBlue(false)}>Unset Blue</button>
       <div className="bucket">
         <div
           className="water"
@@ -14,9 +19,8 @@ function App() {
           }}
         ></div>
       </div>
-      <button onClick={() => setIsBlue(true)}>Make Blue</button>
-      <button onClick={() => setIsBlue(false)}>Unset Blue</button>
     </div>
+    </>
   );
 }
 

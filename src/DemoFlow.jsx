@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 export function DemoFlow() {
-  const TOTAL_BUCKETS = 12;
+  const TOTAL_BUCKETS = 20;
   const [nodes, setNodes] = useState(1);
   const [tasks, setTasks] = useState(1);
   const [filledCount, setFilledCount] = useState(0);
