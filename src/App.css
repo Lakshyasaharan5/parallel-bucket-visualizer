@@ -65,13 +65,19 @@ button:hover {
   background: #c0bcbc;
 }
 
+.main {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 40px;
+}
+
 .bucket {
   position: relative;
   width: 250px;
   height: 400px;
   border: 3px solid black;
   border-radius: 20px;
-  margin: 40px auto;
   overflow: hidden;
 }
 
@@ -79,12 +85,11 @@ button:hover {
   position: absolute;
   bottom: 0;
   width: 100%;
-  background: #add8e6;
+  background: #a195ff;
   transition: height 0.3s linear;
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  overflow: hidden;
 }
 
 .time-text {
@@ -93,4 +98,10 @@ button:hover {
   color: black;
   margin-bottom: 10px;
   z-index: 2;
+}
+
+.history {
+  text-align: left;
+  font-size: 1rem;
+  margin-top: 20px;
 }

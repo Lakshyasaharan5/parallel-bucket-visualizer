@@ -6,13 +6,14 @@ function App() {
   const [cores, setCores] = useState(1);
   const [fillPercent, setFillPercent] = useState(0);
   const [timeTaken, setTimeTaken] = useState(null);
+  const [history, setHistory] = useState([]);
   const intervalRef = useRef(null);
   const [animate, setAnimate] = useState(true);
 
   const coreTimes = {
-    1: 12, 2: 11, 3: 10, 4: 9,
-    5: 8, 6: 7, 7: 6, 8: 5,
-    9: 4, 10: 3, 11: 2, 12: 1,
+    1: 12, 2: 8, 3: 6.5, 4: 5,
+    6: 3.8, 8: 3.2,
+    9: 3, 12: 2.8
   };
 
   const handleSubmit = () => {
@@ -21,12 +22,11 @@ function App() {
 
     if (intervalRef.current) clearInterval(intervalRef.current);
 
-    // Disable animation to reset instantly
+    // Reset animation
     setAnimate(false);
     setFillPercent(0);
     setTimeTaken(null);
 
-    // Allow React to flush DOM update before starting animation
     setTimeout(() => {
       setAnimate(true);
 
@@ -38,12 +38,17 @@ function App() {
           clearInterval(intervalRef.current);
           intervalRef.current = null;
           setTimeTaken(duration);
+
+          // Add entry to history once finished
+          setHistory((prev) => [
+            ...prev,
+            { nodes, cores, totalCores, duration }
+          ]);
         }
         setFillPercent(progress);
       }, 100);
-    }, 50); // small delay so reset applies
+    }, 50);
   };
-
 
   const handleReset = () => {
     if (intervalRef.current) clearInterval(intervalRef.current);
@@ -51,6 +56,7 @@ function App() {
     setTimeTaken(null);
     setNodes(1);
     setCores(1);
+    setHistory([]); // clear history too
   };
 
   return (
@@ -71,7 +77,7 @@ function App() {
         </label>
 
         <label>
-          Cores per Node:
+          Cores-per-node:
           <select value={cores} onChange={(e) => setCores(Number(e.target.value))}>
             {[1, 2, 3, 4].map((c) => (
               <option key={c} value={c}>{c}</option>
@@ -82,15 +88,25 @@ function App() {
         <button onClick={handleSubmit}>Submit</button>
       </div>
 
-      <div className="bucket">
-        <div
-          className="water"
-          style={{
-            height: `${fillPercent}%`,
-            transition: animate ? "height 0.3s linear" : "none"
-          }}
-        >
-          {timeTaken && <span className="time-text">Time: {timeTaken} sec</span>}
+      <div className="main">
+        <div className="bucket">
+          <div
+            className="water"
+            style={{
+              height: `${fillPercent}%`,
+              transition: animate ? "height 0.3s linear" : "none"
+            }}
+          >
+            {timeTaken && <span className="time-text">Time: {timeTaken} sec</span>}
+          </div>
+        </div>
+
+        <div className="history">
+          {history.map((h, i) => (
+            <div key={i}>
+              {h.nodes} node(s), {h.cores} core(s) → {h.duration} sec
+            </div>
+          ))}
         </div>
       </div>
     </div>
