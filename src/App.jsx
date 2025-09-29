@@ -7,6 +7,7 @@ function App() {
   const [fillPercent, setFillPercent] = useState(0);
   const [timeTaken, setTimeTaken] = useState(null);
   const intervalRef = useRef(null);
+  const [animate, setAnimate] = useState(true);
 
   const coreTimes = {
     1: 12, 2: 11, 3: 10, 4: 9,
@@ -19,21 +20,30 @@ function App() {
     const duration = coreTimes[totalCores] || 12;
 
     if (intervalRef.current) clearInterval(intervalRef.current);
+
+    // Disable animation to reset instantly
+    setAnimate(false);
     setFillPercent(0);
     setTimeTaken(null);
 
-    let progress = 0;
-    intervalRef.current = setInterval(() => {
-      progress += 100 / (duration * 10);
-      if (progress >= 100) {
-        progress = 100;
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-        setTimeTaken(duration);
-      }
-      setFillPercent(progress);
-    }, 100);
+    // Allow React to flush DOM update before starting animation
+    setTimeout(() => {
+      setAnimate(true);
+
+      let progress = 0;
+      intervalRef.current = setInterval(() => {
+        progress += 100 / (duration * 10);
+        if (progress >= 100) {
+          progress = 100;
+          clearInterval(intervalRef.current);
+          intervalRef.current = null;
+          setTimeTaken(duration);
+        }
+        setFillPercent(progress);
+      }, 100);
+    }, 50); // small delay so reset applies
   };
+
 
   const handleReset = () => {
     if (intervalRef.current) clearInterval(intervalRef.current);
@@ -75,9 +85,11 @@ function App() {
       <div className="bucket">
         <div
           className="water"
-          style={{ height: `${fillPercent}%` }}
+          style={{
+            height: `${fillPercent}%`,
+            transition: animate ? "height 0.3s linear" : "none"
+          }}
         >
-          <div className="wave"></div>
           {timeTaken && <span className="time-text">Time: {timeTaken} sec</span>}
         </div>
       </div>
