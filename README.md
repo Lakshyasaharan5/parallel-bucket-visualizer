@@ -18,3 +18,12 @@ Interactive tool to visualize serial vs parallel processing in HPC
 | 8           | 3.2        | Plateau starting        |
 | 9           | 3.0        | Almost no gain          |
 | 12          | 2.8        | Plateau (limit reached) |
+
+
+## TODO
+
+- Plot points as user runs the jobs in realtime
+- Add a button for the whole graph to show if needed
+- Add points like 1 Node 2 Cores is better then 2 Nodes 1 Core
+- Update the time accordingly
+- Make history as a set or maybe not
