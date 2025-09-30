@@ -65,17 +65,10 @@ button:hover {
   background: #c0bcbc;
 }
 
-.main {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  gap: 40px;
-}
-
 .bucket {
   position: relative;
-  width: 250px;
-  height: 400px;
+  width: 300px;
+  height: 450px;
   border: 3px solid black;
   border-radius: 20px;
   overflow: hidden;
@@ -104,4 +97,40 @@ button:hover {
   text-align: left;
   font-size: 1rem;
   margin-top: 20px;
+}
+
+.main {
+  display: flex;
+  align-items: center;
+  justify-content: center;  /* optional: centers the children */
+  gap: 20px;
+  height: 450px;
+  max-width: 1200px;         /* controls total width */
+  margin: 0 auto;            /* centers main horizontally */
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.left, .right {
+  height: 100%;            
+  /* border: 1px solid #ccc; */
+  border-radius: 8px;
+  box-sizing: border-box;
+  overflow: auto;                /* if content grows, make it scrollable */
+}
+
+/* Set fixed widths */
+.left {
+  width: 400px;
+}
+
+.center {
+  width: 400px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.right {
+  width: 250px;
 }

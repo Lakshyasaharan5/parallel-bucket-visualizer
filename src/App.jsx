@@ -87,21 +87,24 @@ function App() {
 
         <button onClick={handleSubmit}>Submit</button>
       </div>
-
-      <div className="main">
-        <div className="bucket">
-          <div
-            className="water"
-            style={{
-              height: `${fillPercent}%`,
-              transition: animate ? "height 0.3s linear" : "none"
-            }}
-          >
-            {timeTaken && <span className="time-text">Time: {timeTaken} sec</span>}
+      
+      <div class="main">
+        <div class="left">Graph here</div>
+        <div class="center">
+          <div className="bucket">
+            <div
+              className="water"
+              style={{
+                height: `${fillPercent}%`,
+                transition: animate ? "height 0.3s linear" : "none"
+              }}
+            >
+              {timeTaken && <span className="time-text">Time: {timeTaken} sec</span>}
+            </div>
           </div>
         </div>
-
-        <div className="history">
+        <div class="right">
+          <h3>History</h3>
           {history.map((h, i) => (
             <div key={i}>
               {h.nodes} node(s), {h.cores} core(s) → {h.duration} sec
@@ -109,6 +112,7 @@ function App() {
           ))}
         </div>
       </div>
+
     </div>
   );
 }
