@@ -5,13 +5,17 @@ Interactive tool to visualize serial vs parallel processing in HPC
 
 <img src="./docs/assets/Plan1.png" width="50%">
 
+## Plan v2 for UI
+
+<img src="./docs/assets/Plan2.png" width="50%">
+
 
 ## Time vs Cores
 
 | Nodes and cores | Time (sec) | 
 | --------------- | ---------- | 
 | 1N X 1C         |     12     | 
-| 2N X 1C         |     9      | 
+| 2N X 1C         |     8      | 
 | 1N X 2C         |     7.5    | 
 | 3N X 1C         |     6.5    | 
 | 1N X 3C         |     6      | 
