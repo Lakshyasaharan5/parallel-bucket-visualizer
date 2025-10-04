@@ -8,17 +8,20 @@ Interactive tool to visualize serial vs parallel processing in HPC
 
 ## Time vs Cores
 
-| Total Cores | Time (sec) | Notes                   |
-| ----------- | ---------- | ----------------------- |
-| 1           | 12         | Baseline, slowest       |
-| 2           | 8          | ~1.5× speedup           |
-| 3           | 6.5        | More speedup            |
-| 4           | 5          | 2.4× faster than 1 core |
-| 6           | 3.8        | Good scaling            |
-| 8           | 3.2        | Plateau starting        |
-| 9           | 3.0        | Almost no gain          |
-| 12          | 2.8        | Plateau (limit reached) |
-
+| Nodes and cores | Time (sec) | 
+| --------------- | ---------- | 
+| 1N X 1C         |     12     | 
+| 2N X 1C         |     9      | 
+| 1N X 2C         |     7.5    | 
+| 3N X 1C         |     6.5    | 
+| 1N X 3C         |     6      | 
+| 2N X 2C         |     5.5    | 
+| 1N X 4C         |     5      | 
+| 3N X 2C         |     4      | 
+| 2N X 3C         |     3.8    | 
+| 2N X 4C         |     3.2    | 
+| 3N X 3C         |     3.0    | 
+| 3N X 4C         |     2.8    | 
 
 ## TODO
 
