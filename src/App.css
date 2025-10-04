@@ -86,7 +86,7 @@ button:hover {
 }
 
 .time-text {
-  font-size: 1.5rem;
+  font-size: 2.0rem;
   font-weight: bold;
   color: black;
   margin-bottom: 10px;
@@ -119,7 +119,6 @@ button:hover {
   overflow: auto;                /* if content grows, make it scrollable */
 }
 
-/* Set fixed widths */
 .left {
   width: 400px;
 }
@@ -132,5 +131,8 @@ button:hover {
 }
 
 .right {
-  width: 250px;
+  width: 300px;
+  text-align: left;
+  font-size: 1.4rem;
+  font-weight: light;
 }
