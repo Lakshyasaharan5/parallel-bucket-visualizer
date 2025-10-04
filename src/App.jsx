@@ -1,5 +1,8 @@
 import React, { useState, useRef } from "react";
 import "./App.css";
+import {
+  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
+} from "recharts";
 
 function App() {
   const [nodes, setNodes] = useState(1);
@@ -23,22 +26,23 @@ function App() {
     "2-4": 3.2,
     "3-3": 3.0,
     "3-4": 2.8
-  };  
+  };
 
   const handleSubmit = () => {
     const key = `${nodes}-${cores}`;
+    const totalCores = nodes * cores;
     const duration = coreTimes[key] || 12;
-  
+
     if (intervalRef.current) clearInterval(intervalRef.current);
-  
+
     // Reset animation instantly
     setAnimate(false);
     setFillPercent(0);
     setTimeTaken(null);
-  
+
     setTimeout(() => {
       setAnimate(true);
-  
+
       let progress = 0;
       intervalRef.current = setInterval(() => {
         progress += 100 / (duration * 10);
@@ -47,17 +51,17 @@ function App() {
           clearInterval(intervalRef.current);
           intervalRef.current = null;
           setTimeTaken(duration);
-  
+
           // Save history
           setHistory((prev) => [
             ...prev,
-            { nodes, cores, duration }
+            { nodes, cores, totalCores, duration }
           ]);
         }
         setFillPercent(progress);
       }, 100);
     }, 50);
-  };  
+  };
 
   const handleReset = () => {
     if (intervalRef.current) clearInterval(intervalRef.current);
@@ -96,9 +100,73 @@ function App() {
 
         <button onClick={handleSubmit}>Submit</button>
       </div>
-      
+
       <div className="main">
-        <div className="left">Graph here</div>
+        <div className="left">
+          <ResponsiveContainer width="100%" height={400}>
+            <LineChart
+              data={[...history]
+                .map((h) => ({
+                  totalCores: h.nodes * h.cores,
+                  duration: h.duration,
+                }))
+                .sort((a, b) => a.totalCores - b.totalCores)}              
+              margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+
+              {/* X Axis — Total Cores */}
+              <XAxis
+                dataKey="totalCores"
+                type="number"
+                domain={[1, 12]}
+                ticks={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]}
+                label={{
+                  value: "Total Cores",
+                  position: "insideBottom",
+                  offset: -5,
+                  style: { fontSize: 16, fontWeight: "bold" },
+                }}
+              />
+
+              {/* Y Axis — Time (bottom = 1, top = 12) */}
+              <YAxis
+                type="number"
+                domain={[1, 12]}
+                ticks={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]}
+                label={{
+                  value: "Time (sec)",
+                  angle: -90,
+                  position: "insideLeft",
+                  offset: 10,
+                  style: { fontSize: 16, fontWeight: "bold" },
+                }}
+              />
+
+              <Tooltip
+                formatter={(val, name, props) => [
+                  `${val} sec`,
+                  `${props.payload.totalCores} cores`,
+                ]}
+              />
+
+              <Line
+                type="monotone"
+                dataKey="duration"
+                stroke="#7c4dff"
+                strokeWidth={3}
+                dot={{ r: 6, fill: "#7c4dff" }}
+                activeDot={{ r: 8, fill: "#7c4dff" }}
+                isAnimationActive={false}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+
+
+
+
+
         <div className="center">
           <div className="bucket">
             <div

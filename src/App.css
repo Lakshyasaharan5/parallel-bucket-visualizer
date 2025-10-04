@@ -106,9 +106,10 @@ button:hover {
   gap: 20px;
   height: 450px;
   max-width: 1200px;         /* controls total width */
-  margin: 0 auto;            /* centers main horizontally */
+  margin-left: 50px;            
   padding: 10px;
   box-sizing: border-box;
+  /* border: 1px solid #ccc; */
 }
 
 .left, .right {
@@ -120,7 +121,10 @@ button:hover {
 }
 
 .left {
-  width: 400px;
+  width: 1000px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .center {
@@ -131,7 +135,7 @@ button:hover {
 }
 
 .right {
-  width: 300px;
+  width: 400px;
   text-align: left;
   font-size: 1.4rem;
   font-weight: light;
