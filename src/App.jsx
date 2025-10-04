@@ -11,25 +11,34 @@ function App() {
   const [animate, setAnimate] = useState(true);
 
   const coreTimes = {
-    1: 12, 2: 8, 3: 6.5, 4: 5,
-    6: 3.8, 8: 3.2,
-    9: 3, 12: 2.8
-  };
+    "1-1": 12,
+    "2-1": 8,
+    "1-2": 7.5,
+    "3-1": 6.5,
+    "1-3": 6,
+    "2-2": 5.5,
+    "1-4": 5,
+    "3-2": 4,
+    "2-3": 3.8,
+    "2-4": 3.2,
+    "3-3": 3.0,
+    "3-4": 2.8
+  };  
 
   const handleSubmit = () => {
-    const totalCores = nodes * cores;
-    const duration = coreTimes[totalCores] || 12;
-
+    const key = `${nodes}-${cores}`;
+    const duration = coreTimes[key] || 12;
+  
     if (intervalRef.current) clearInterval(intervalRef.current);
-
-    // Reset animation
+  
+    // Reset animation instantly
     setAnimate(false);
     setFillPercent(0);
     setTimeTaken(null);
-
+  
     setTimeout(() => {
       setAnimate(true);
-
+  
       let progress = 0;
       intervalRef.current = setInterval(() => {
         progress += 100 / (duration * 10);
@@ -38,17 +47,17 @@ function App() {
           clearInterval(intervalRef.current);
           intervalRef.current = null;
           setTimeTaken(duration);
-
-          // Add entry to history once finished
+  
+          // Save history
           setHistory((prev) => [
             ...prev,
-            { nodes, cores, totalCores, duration }
+            { nodes, cores, duration }
           ]);
         }
         setFillPercent(progress);
       }, 100);
     }, 50);
-  };
+  };  
 
   const handleReset = () => {
     if (intervalRef.current) clearInterval(intervalRef.current);
@@ -88,9 +97,9 @@ function App() {
         <button onClick={handleSubmit}>Submit</button>
       </div>
       
-      <div class="main">
-        <div class="left">Graph here</div>
-        <div class="center">
+      <div className="main">
+        <div className="left">Graph here</div>
+        <div className="center">
           <div className="bucket">
             <div
               className="water"
@@ -103,11 +112,11 @@ function App() {
             </div>
           </div>
         </div>
-        <div class="right">
+        <div className="right">
           <h3>History</h3>
           {history.map((h, i) => (
             <div key={i}>
-              {h.nodes} node(s), {h.cores} core(s) → {h.duration} sec
+              {h.nodes}N x {h.cores}C → {h.duration} sec
             </div>
           ))}
         </div>
