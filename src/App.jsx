@@ -12,6 +12,7 @@ function App() {
   const [history, setHistory] = useState([]);
   const intervalRef = useRef(null);
   const [animate, setAnimate] = useState(true);
+  const [isDisabled, setIsDisabled] = useState(false);
 
   const coreTimes = {
     "1-1": 12,
@@ -28,17 +29,35 @@ function App() {
     "3-4": 2.8
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const key = `${nodes}-${cores}`;
     const totalCores = nodes * cores;
     const duration = coreTimes[key] || 12;
 
     if (intervalRef.current) clearInterval(intervalRef.current);
 
+    // Disable Submit button
+    setIsDisabled(true);
+
+    // Step 1: Turn ON LEDs
+    try {
+      await fetch("http://128.235.43.17:8000/start", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nodes, cores }),
+      });
+    } catch (error) {
+      console.error("Failed to start LEDs:", error);
+    }
+
     // Reset animation instantly
     setAnimate(false);
     setFillPercent(0);
     setTimeTaken(null);
+
+    // Step 2: Wait 3 sec before animation
+    await new Promise((r) => setTimeout(r, 3000));
+    
 
     setTimeout(() => {
       setAnimate(true);
@@ -52,11 +71,17 @@ function App() {
           intervalRef.current = null;
           setTimeTaken(duration);
 
+          // Step 4: Turn OFF LEDs
+          fetch("http://128.235.43.17:8000/stop", { method: "POST" });
+
           // Save history
           setHistory((prev) => [
             ...prev,
             { nodes, cores, totalCores, duration }
           ]);
+
+          // Step 5: Re-enable button
+          setIsDisabled(false);
         }
         setFillPercent(progress);
       }, 100);
@@ -98,7 +123,10 @@ function App() {
           </select>
         </label>
 
-        <button onClick={handleSubmit}>Submit</button>
+        <button onClick={handleSubmit} disabled={isDisabled}>
+          {isDisabled ? "Running..." : "Submit"}
+        </button>
+
       </div>
 
       <div className="main">
@@ -110,7 +138,7 @@ function App() {
                   totalCores: h.nodes * h.cores,
                   duration: h.duration,
                 }))
-                .sort((a, b) => a.totalCores - b.totalCores)}              
+                .sort((a, b) => a.totalCores - b.totalCores)}
               margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
             >
               <CartesianGrid strokeDasharray="3 3" />
