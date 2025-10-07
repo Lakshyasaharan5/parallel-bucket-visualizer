@@ -1,24 +1,15 @@
-from gpiozero import LED
-import signal
-import sys
-import time
+import RPi.GPIO as GPIO
+import sys, socket
 
-led = LED(17)
+PIN = 14
+GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)  
+GPIO.setup(PIN, GPIO.OUT)
 
-def cleanup(sig, frame):
-    led.off()
-    sys.exit(0)
+if sys.argv[1] == "on":
+    GPIO.output(PIN, GPIO.HIGH)    
+elif sys.argv[1] == "off":
+    GPIO.output(PIN, GPIO.LOW)
 
-# Catch Ctrl+C and kill signals
-signal.signal(signal.SIGINT, cleanup)
-signal.signal(signal.SIGTERM, cleanup)
-
-try:
-    while True:
-        led.on()
-        time.sleep(1)
-except KeyboardInterrupt:
-    cleanup(None, None)
-
-
+print(f"Light turned {sys.argv[1]} on {socket.gethostname()}")
 

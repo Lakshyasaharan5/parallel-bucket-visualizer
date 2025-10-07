@@ -1,47 +1,40 @@
-import subprocess
-from fastapi import FastAPI, Request
+import asyncio
+from fastapi import FastAPI, Request, Response
+from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
 app = FastAPI()
 
-def run_ssh_command(node: str, action: str):
-    """Run the SSH LED command on a given node."""
-    try:
-        cmd = ["ssh", node, f"python /home/ls565/fast-server/tmp.py {action}"]
-        result = subprocess.run(cmd, capture_output=True, text=True, check=True)
-        print(f"[{node}] {action} -> success")
-        if result.stdout:
-            print("stdout:", result.stdout.strip())
-        if result.stderr:
-            print("stderr:", result.stderr.strip())
-    except subprocess.CalledProcessError as e:
-        print(f"[{node}] {action} -> ERROR")
-        print("stderr:", e.stderr.strip())
+# Allow your React frontend
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],   # Or restrict to ["http://localhost:3000"]
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
+async def run_ssh(node: str, action: str):
+    cmd = f"ssh {node} 'python /home/ls565/parallel-bucket-visualizer/backend/led.py {action}'"
+    asyncio.create_task(asyncio.create_subprocess_shell(cmd))
 
 @app.post("/start")
 async def start_job(request: Request):
     data = await request.json()
-    nodes_count = data.get("nodes", 1)
-    tasks = data.get("tasks", 1)
+    nodes = data.get("nodes", 1)
 
-    print(f"nodes: {nodes_count}, tasks: {tasks}")
+    for i in range(1, nodes + 1):
+        await run_ssh(f"n{i}", "on")
 
-    for i in range(1, nodes_count + 1):
-        run_ssh_command(f"n{i}", "on")
-
-    return {"status": "started", "nodes": nodes_count, "tasks": tasks}
-
+    # just return 200 OK with no body
+    return Response(status_code=200)
 
 @app.post("/stop")
 async def stop_job():
-    print("stopping lights on ALL nodes...")
+    for i in range(1, 4):
+        await run_ssh(f"n{i}", "off")
 
-    for i in range(1, 4):  # always hit n1, n2, n3
-        run_ssh_command(f"n{i}", "off")
-
-    return {"status": "stopped", "nodes": "all"}
-
+    return Response(status_code=200)
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
