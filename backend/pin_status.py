@@ -1,12 +1,13 @@
 import RPi.GPIO as GPIO
 
-PIN = 14
+PINS = [27, 5, 13, 21]
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
-GPIO.setup(PIN, GPIO.OUT)  # or GPIO.IN, both can read current logic level
 
-state = GPIO.input(PIN)
-print(f"GPIO {PIN} is {'HIGH (on)' if state else 'LOW (off)'}")
+for pin in PINS:
+    GPIO.setup(pin, GPIO.OUT)
+    state = GPIO.input(pin)
+    print(f"GPIO {pin} is {'HIGH (on)' if state else 'LOW (off)'}")
 
 GPIO.cleanup()
 
