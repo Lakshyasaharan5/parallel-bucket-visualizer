@@ -3,6 +3,7 @@ import "./App.css";
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
 } from "recharts";
+const CLUSTER_URL = "http://128.235.43.17:8000";
 
 function App() {
   const [nodes, setNodes] = useState(1);
@@ -41,7 +42,7 @@ function App() {
 
     // Step 1: Turn ON LEDs
     try {
-      await fetch("http://128.235.43.17:8000/start", {
+      await fetch(`${CLUSTER_URL}/start`, { 
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ nodes, cores }),
@@ -72,7 +73,7 @@ function App() {
           setTimeTaken(duration);
 
           // Step 4: Turn OFF LEDs
-          fetch("http://128.235.43.17:8000/stop", { method: "POST" });
+          fetch(`${CLUSTER_URL}/stop`, { method: "POST" });
 
           // Save history
           setHistory((prev) => [
@@ -97,7 +98,7 @@ function App() {
 
     // Immediately turn OFF LEDs
     try {
-      await fetch("http://128.235.43.17:8000/stop", { method: "POST" });
+      await fetch(`${CLUSTER_URL}/stop`, { method: "POST" });
     } catch (error) {
       console.error("Failed to stop LEDs:", error);
     }
