@@ -57,7 +57,7 @@ function App() {
 
     // Step 2: Wait 3 sec before animation
     await new Promise((r) => setTimeout(r, 3000));
-    
+
 
     setTimeout(() => {
       setAnimate(true);
@@ -88,13 +88,33 @@ function App() {
     }, 50);
   };
 
-  const handleReset = () => {
-    if (intervalRef.current) clearInterval(intervalRef.current);
+  const handleReset = async () => {
+    // Stop any running animation
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+
+    // Immediately turn OFF LEDs
+    try {
+      await fetch("http://128.235.43.17:8000/stop", { method: "POST" });
+    } catch (error) {
+      console.error("Failed to stop LEDs:", error);
+    }
+
+    // Reset UI state
     setFillPercent(0);
     setTimeTaken(null);
     setNodes(1);
     setCores(1);
-    setHistory([]); // clear history too
+    setHistory([]);
+    setAnimate(false);
+
+    // Re-enable the Submit button
+    setIsDisabled(false);
+
+    // After a short delay, re-enable animation for next run
+    setTimeout(() => setAnimate(true), 100);
   };
 
   return (
