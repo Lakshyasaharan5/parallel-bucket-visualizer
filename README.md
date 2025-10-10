@@ -29,8 +29,7 @@ Interactive tool to visualize serial vs parallel processing in HPC
 
 ## TODO
 
-- Plot points as user runs the jobs in realtime
-- Add a button for the whole graph to show if needed
-- Add points like 1 Node 2 Cores is better then 2 Nodes 1 Core
-- Update the time accordingly
-- Make history as a set or maybe not
+- Increase graph size
+- Keep the LED stay ON for 10s after animation is finished for the users to see
+- Modify times to show better graph structure as it plateaus
+- Connect Macbook to Pi cluster's network switch to bypass internet need
