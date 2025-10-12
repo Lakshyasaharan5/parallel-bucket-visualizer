@@ -1,13 +1,7 @@
 # parallel-bucket-visualizer
 Interactive tool to visualize serial vs parallel processing in HPC
 
-## Plan v1 for UI
-
-<img src="./docs/assets/Plan1.png" width="50%">
-
-## Plan v2 for UI
-
-<img src="./docs/assets/Plan2.png" width="50%">
+<img src="./docs/assets/Plan2.png" width="70%">
 
 
 ## Time vs Cores
