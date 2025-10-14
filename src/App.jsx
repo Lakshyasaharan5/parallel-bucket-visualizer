@@ -40,30 +40,32 @@ function App() {
     // Disable Submit button
     setIsDisabled(true);
 
-    // Step 1: Turn ON LEDs
-    try {
-      await fetch(`${CLUSTER_URL}/start`, { 
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nodes, cores }),
-      });
-    } catch (error) {
-      console.error("Failed to start LEDs:", error);
-    }
+    // Step 1: Try turning ON LEDs — fire and forget
+    (async () => {
+      try {
+        await fetch(`${CLUSTER_URL}/start`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ nodes, cores }),
+        });
+      } catch (error) {
+        console.warn("LED start failed (continuing anyway):", error);
+      }
+    })();
 
     // Reset animation instantly
     setAnimate(false);
     setFillPercent(0);
     setTimeTaken(null);
 
-    // Step 2: Wait 3 sec before animation
+    // Step 2: Wait 3 sec for LED sync (optional visual delay)
     await new Promise((r) => setTimeout(r, 3000));
 
-
+    // Step 3: Start animation
     setTimeout(() => {
       setAnimate(true);
-
       let progress = 0;
+
       intervalRef.current = setInterval(() => {
         progress += 100 / (duration * 10);
         if (progress >= 100) {
@@ -72,14 +74,17 @@ function App() {
           intervalRef.current = null;
           setTimeTaken(duration);
 
-          // Step 4: Turn OFF LEDs
-          fetch(`${CLUSTER_URL}/stop`, { method: "POST" });
+          // Step 4: Try turning OFF LEDs — fire and forget
+          (async () => {
+            try {
+              await fetch(`${CLUSTER_URL}/stop`, { method: "POST" });
+            } catch (error) {
+              console.warn("LED stop failed (continuing anyway):", error);
+            }
+          })();
 
           // Save history
-          setHistory((prev) => [
-            ...prev,
-            { nodes, cores, totalCores, duration }
-          ]);
+          setHistory((prev) => [...prev, { nodes, cores, totalCores, duration }]);
 
           // Step 5: Re-enable button
           setIsDisabled(false);
@@ -89,34 +94,38 @@ function App() {
     }, 50);
   };
 
-  const handleReset = async () => {
-    // Stop any running animation
+
+  const handleReset = () => {
+    // Step 1: Stop any running animation immediately
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
       intervalRef.current = null;
     }
-
-    // Immediately turn OFF LEDs
-    try {
-      await fetch(`${CLUSTER_URL}/stop`, { method: "POST" });
-    } catch (error) {
-      console.error("Failed to stop LEDs:", error);
-    }
-
-    // Reset UI state
+  
+    // Step 2: Try to turn OFF LEDs — fire and forget (non-blocking)
+    (async () => {
+      try {
+        await fetch(`${CLUSTER_URL}/stop`, { method: "POST" });
+      } catch (error) {
+        console.warn("LED stop failed (continuing anyway):", error);
+      }
+    })();
+  
+    // Step 3: Instantly reset UI state
     setFillPercent(0);
     setTimeTaken(null);
     setNodes(1);
     setCores(1);
     setHistory([]);
     setAnimate(false);
-
-    // Re-enable the Submit button
+  
+    // Step 4: Re-enable Submit button
     setIsDisabled(false);
-
-    // After a short delay, re-enable animation for next run
+  
+    // Step 5: Re-enable animation after a short delay for smooth restart
     setTimeout(() => setAnimate(true), 100);
   };
+  
 
   return (
     <div className="container">
