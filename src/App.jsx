@@ -161,7 +161,7 @@ function App() {
 
       <div className="main">
         <div className="left">
-          <ResponsiveContainer width="100%" height={400}>
+          <ResponsiveContainer width="100%" height={'90%'}>
             <LineChart
               data={[...history]
                 .map((h) => ({
@@ -179,11 +179,12 @@ function App() {
                 type="number"
                 domain={[1, 12]}
                 ticks={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]}
+                tick={{ fontSize: 22, fontWeight: "bold", fill: "#333" }}
                 label={{
                   value: "Total Cores",
-                  position: "insideBottom",
-                  offset: -5,
-                  style: { fontSize: 16, fontWeight: "bold" },
+                  position: "bottom",
+                  offset: 4,
+                  style: { fontSize: 22, fontWeight: "bold"},
                 }}
               />
 
@@ -192,12 +193,13 @@ function App() {
                 type="number"
                 domain={[1, 12]}
                 ticks={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]}
+                tick={{ fontSize: 22, fontWeight: "bold", fill: "#333" }}
                 label={{
                   value: "Time (sec)",
                   angle: -90,
                   position: "insideLeft",
                   offset: 10,
-                  style: { fontSize: 16, fontWeight: "bold" },
+                  style: { fontSize: 22, fontWeight: "bold" },
                 }}
               />
 
@@ -220,11 +222,6 @@ function App() {
             </LineChart>
           </ResponsiveContainer>
         </div>
-
-
-
-
-
         <div className="center">
           <div className="bucket">
             <div
