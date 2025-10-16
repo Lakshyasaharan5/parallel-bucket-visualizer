@@ -21,19 +21,19 @@ function App() {
     "1-2": 6.94,
     "1-3": 5.29,
     "1-4": 4.49,
-  
+
     // Two nodes — slight network overhead (~10–15%)
     "2-1": 7.6,   // 2 total cores
     "2-2": 4.1,   // 4 total cores
     "2-3": 3.7,   // 6 total cores
     "2-4": 3.4,   // 8 total cores
-  
+
     // Three nodes — stronger overhead (~20–25%)
     "3-1": 6.1,   // 3 total cores → worse than 1N×3C
     "3-2": 3.9,   // 6 total cores
     "3-3": 3.4,   // 9 total cores
     "3-4": 3.2    // 12 total cores
-  };  
+  };
 
   const handleSubmit = async () => {
     const key = `${nodes}-${cores}`;
@@ -99,6 +99,25 @@ function App() {
     }, 50);
   };
 
+  const showFullGraph = () => {
+    // handleReset();
+    // Step 1: Clear existing history
+    setHistory([]);
+
+    // Step 2: Build a new array of all (nodes, cores) pairs from coreTimes
+    const fullHistory = Object.entries(coreTimes).map(([key, duration]) => {
+      const [nodes, cores] = key.split("-").map(Number);
+      return {
+        nodes,
+        cores,
+        totalCores: nodes * cores,
+        duration
+      };
+    });
+
+    // Step 3: Fill history with all of them
+    setHistory(fullHistory);
+  }
 
   const handleReset = () => {
     // Step 1: Stop any running animation immediately
@@ -106,7 +125,7 @@ function App() {
       clearInterval(intervalRef.current);
       intervalRef.current = null;
     }
-  
+
     // Step 2: Try to turn OFF LEDs — fire and forget (non-blocking)
     (async () => {
       try {
@@ -115,7 +134,7 @@ function App() {
         console.warn("LED stop failed (continuing anyway):", error);
       }
     })();
-  
+
     // Step 3: Instantly reset UI state
     setFillPercent(0);
     setTimeTaken(null);
@@ -123,20 +142,21 @@ function App() {
     setCores(1);
     setHistory([]);
     setAnimate(false);
-  
+
     // Step 4: Re-enable Submit button
     setIsDisabled(false);
-  
+
     // Step 5: Re-enable animation after a short delay for smooth restart
     setTimeout(() => setAnimate(true), 100);
   };
-  
+
 
   return (
     <div className="container">
       <div className="header">
         <h1>High Performance Computing</h1>
         <button className="reset-btn" onClick={handleReset}>Reset</button>
+        <button className="full-graph-btn" onClick={showFullGraph}>Full Graph</button>
       </div>
 
       <div className="controls">
@@ -196,7 +216,7 @@ function App() {
                   value: "Total Cores",
                   position: "bottom",
                   offset: 4,
-                  style: { fontSize: 22, fontWeight: "bold"},
+                  style: { fontSize: 22, fontWeight: "bold" },
                 }}
               />
 
