@@ -16,19 +16,24 @@ function App() {
   const [isDisabled, setIsDisabled] = useState(false);
 
   const coreTimes = {
-    "1-1": 12,
-    "2-1": 8,
-    "1-2": 7.5,
-    "3-1": 6.5,
-    "1-3": 6,
-    "2-2": 5.5,
-    "1-4": 5,
-    "3-2": 4,
-    "2-3": 3.8,
-    "2-4": 3.2,
-    "3-3": 3.0,
-    "3-4": 2.8
-  };
+    // Single node (ideal scaling)
+    "1-1": 12.0,
+    "1-2": 6.94,
+    "1-3": 5.29,
+    "1-4": 4.49,
+  
+    // Two nodes — slight network overhead (~10–15%)
+    "2-1": 7.6,   // 2 total cores
+    "2-2": 4.1,   // 4 total cores
+    "2-3": 3.7,   // 6 total cores
+    "2-4": 3.4,   // 8 total cores
+  
+    // Three nodes — stronger overhead (~20–25%)
+    "3-1": 6.1,   // 3 total cores → worse than 1N×3C
+    "3-2": 3.9,   // 6 total cores
+    "3-3": 3.4,   // 9 total cores
+    "3-4": 3.2    // 12 total cores
+  };  
 
   const handleSubmit = async () => {
     const key = `${nodes}-${cores}`;
