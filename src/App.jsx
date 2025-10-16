@@ -173,7 +173,14 @@ function App() {
                   totalCores: h.nodes * h.cores,
                   duration: h.duration,
                 }))
-                .sort((a, b) => a.totalCores - b.totalCores)}
+                .sort((a, b) => {
+                  // First, compare by totalCores
+                  if (a.totalCores !== b.totalCores) {
+                    return a.totalCores - b.totalCores;
+                  }
+                  // Tie-breaker: compare by duration
+                  return a.duration - b.duration;
+                })}
               margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
             >
               <CartesianGrid strokeDasharray="3 3" />
