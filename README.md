@@ -23,7 +23,8 @@ Interactive tool to visualize serial vs parallel processing in HPC
 
 ## TODO
 
-- Increase graph size
-- Keep the LED stay ON for 10s after animation is finished for the users to see
-- Modify times to show better graph structure as it plateaus
-- Connect Macbook to Pi cluster's network switch to bypass internet need
+- Fix delay in animation and LEDs toggling.
+- Keep the submit button disabled until everything is done
+- Make the flow robust so it doesn't break when someone clicks so many things at once
+- Check fronted portability on another laptop
+
