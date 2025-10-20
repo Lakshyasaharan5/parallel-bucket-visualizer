@@ -3,7 +3,7 @@ import "./App.css";
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
 } from "recharts";
-const CLUSTER_URL = "http://128.235.43.17:8000";
+const CLUSTER_URL = "http://192.168.1.1:8000";
 
 function App() {
   const [nodes, setNodes] = useState(1);
@@ -64,7 +64,7 @@ function App() {
     setTimeTaken(null);
 
     // Step 2: Wait 3 sec for LED sync (optional visual delay)
-    await new Promise((r) => setTimeout(r, 3000));
+    await new Promise((r) => setTimeout(r, 5000));
 
     // Step 3: Start animation
     setTimeout(() => {
@@ -80,13 +80,24 @@ function App() {
           setTimeTaken(duration);
 
           // Step 4: Try turning OFF LEDs — fire and forget
-          (async () => {
-            try {
-              await fetch(`${CLUSTER_URL}/stop`, { method: "POST" });
-            } catch (error) {
-              console.warn("LED stop failed (continuing anyway):", error);
-            }
-          })();
+          // (async () => {
+          //   try {
+          //     await fetch(`${CLUSTER_URL}/stop`, { method: "POST" });
+          //   } catch (error) {
+          //     console.warn("LED stop failed (continuing anyway):", error);
+          //   }
+          // })();
+          // Step 4: Delay 5 seconds before turning OFF LEDs
+          setTimeout(() => {
+            (async () => {
+              try {
+                await fetch(`${CLUSTER_URL}/stop`, { method: "POST" });
+              } catch (error) {
+                console.warn("LED stop failed (continuing anyway):", error);
+              }
+            })();
+          }, 3000); // 3-second delay
+
 
           // Save history
           setHistory((prev) => [...prev, { nodes, cores, totalCores, duration }]);
