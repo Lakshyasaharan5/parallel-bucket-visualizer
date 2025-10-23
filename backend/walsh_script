@@ -1,0 +1,219 @@
+#!/bin/bash
+##############################################################################
+# Little ditty for blinking lights on Lakshya's project
+# 17-Oct-2025 /KJW
+##############################################################################
+set -u
+
+##############################################################################
+# Config globals
+##############################################################################
+CYCLE_SECS=1 # How many seconds to loop checking CPUs
+DEFAULT_NODES='n1,n2,n3'
+LED_SCRIPT='/home/ls565/parallel-bucket-visualizer/backend/led.py'
+
+##############################################################################
+# Non-config globals
+##############################################################################
+ME=${0##*/}
+declare -A CPUS_ON
+DEBUG=false
+TESTMODE=false
+
+USAGE="Synopsis:
+	Control LEDs on Raspberry Pi cluster project via 
+	$LED_SCRIPT
+
+Syntax:
+	$ME [-h] [-a] [-s #] [node[,nodes]]
+	
+
+In which:
+
+	-h ------- Display this usage info
+	-a ------- All on, just turn all nodes, no active cycle
+	-d ------- Debugging, show commands before execution
+	-t ------- Testing, show commands, but do not execute them
+	-s # ----- Number of seconds to cycle in active mode, 
+	           default is $CYCLE_SECS
+	node[s] -- Coma delimited list of nodes, default is
+	           $DEFAULT_NODES
+
+Notes:
+	Default operation is to just turn all the LEDs on. It is recommended that
+	the .ssh/config file be updated to support shared/persistant connections:
+	Shared ssh sessions previously just login03
+		ControlMaster auto
+		ControlPath ~/.ssh/%r@%h:%p
+		ControlPersist 30m
+"
+
+##############################################################################
+# Subs
+##############################################################################
+careful() {
+	bugout "${@:-}"
+	$TESTMODE && return 0
+	eval "${@}" || bomb "Error from \"$*\""
+}
+
+cpus_in_use() {
+	local node=$1 count=0
+	cpu_info $node CPUAlloc; count=$?
+	return $count
+}
+
+cpus_on() {
+	local node=$1 count=0
+	cpu_info $node CPUTot; count=$?
+	echo $count cpus on $node
+	return $count
+}
+
+cpu_info() {
+	# Returns count as RC
+	local node=$1 param="$2=" rc=''
+	set -- $(scontrol show node $node | grep "$param")
+	[ $# -gt 0 ] || bomb "Invalid node \"$node\" specified"
+	for item in $* ; do
+		case "$item" in
+			$param[0-9]* )
+				rc=${item#$param}
+				isnum "$rc" || bomb "Bad count \"$rc\" expected $param value"
+				;;
+		esac
+	done
+	[ -n "$rc" ] || bomb "No $param found $node"
+	return $count
+}
+
+bugout() {
+	$DEBUG && echo "$ME# ${*:-}"
+}
+
+bomb() {
+	say "ABTERM--${*:-}" >&2
+	exit 1
+}
+
+isnum() {
+	case "${1:-}" in
+		'' ) return 1 ;; # Fail, null is not number
+		*[^0-9]* ) return 1 ;; # Fail, contains non-number
+		* ) return 0 ;; # Success, is a number
+	esac
+}
+
+say() {
+	echo "$ME: ${*:-}"
+}
+
+turn_on_1_led() {
+	# Because the utility turns on or off # LEDs, need to
+	# 1) turn off all LEDs
+	# 2) turn on # of LEDs
+	# 3) turn off #-1 LEDs
+
+	local node=$1 led_num=$2
+	careful ssh $node $LED_SCRIPT --switch off --lights ${CPUS_ON[$node]}
+	careful ssh $node $LED_SCRIPT --switch on --lights $led_num
+	let led_num--
+	[ $led_num -gt 0 ] && careful ssh $node $LED_SCRIPT --switch on --lights $led_num
+}
+
+turn_on_leds() {
+	local node=$1 led_num=$2
+	# Because we don't know of more then $2 LEDs are on, we must
+	# first turn off all the LEDs
+	careful ssh $node $LED_SCRIPT --switch off --lights ${CPUS_ON[$node]}
+	careful ssh $node $LED_SCRIPT --switch on --lights $led_num
+}
+
+##############################################################################
+# Mainline
+# Parsing args
+##############################################################################
+active_mode=true
+fixed_cpu_count=''
+while [ $# -gt 0 ] ; do
+	case "$1" in
+		'-h' ) echo "$USAGE" ; exit 1 ;;
+		'-a' ) active_mode=false ;;
+		'-d' ) DEBUG=true ;;
+		'-C' ) fixed_cpu_count=$2 ; shift ;; # Hidden debugging option
+		'-L' ) LED_SCRIPT=/bin/true ;; # Hidden debugging option
+		'-s' ) 
+			[ $# -gt 1 ] || bomb "Option -s requires # of seconds" 
+			shift
+			CYCLE_SECS=$1
+			isnum "$CYCLE_SECS" || bomb "Non-numeric given in \"-s $CYCLE_SECS\""
+			[ $CYCLE_SECS -gt 0 ] || bomb "Need > 0 secods with -s"
+			;;
+		'-t' ) DEBUG=true ; TESTMODE=true ;;
+		'-'* ) bomb "Uknown option \"$1\" given, use \"-h\" for usage" ;;
+		* ) break ;;
+	esac
+	shift
+done
+
+if [ $# -gt 0 ] ; then
+	nodes=${*//,/ }
+else
+	nodes=${DEFAULT_NODES//,/ }
+fi
+
+[ -x "$LED_SCRIPT" ] || bomb "LED script \"$LED_SCRIPT\" doesn't exist or isn't executable"
+
+##############################################################################
+# Verify nodes exist and how many core/cpus are on them?
+##############################################################################
+declare -A cpus_used
+for node in $nodes ; do
+	#cpus_in_use $node ; CPUS_ON[$node]=$?
+	cpus_on $node ; CPUS_ON[$node]=$?
+	[ ${CPUS_ON[$node]} -gt 0 ] || bomb "No CPUs on $node?"
+	[ -n "$fixed_cpu_count" ] && CPUS_ON[$node]=$fixed_cpu_count
+	bugout "CPUS_ON[$node]={${CPUS_ON[$node]}}"
+	cpus_used[$node]=0
+done
+
+##############################################################################
+# Test that configured LEDs by cycling through them all
+##############################################################################
+for node in $nodes ; do
+	for led in $(seq 1 ${CPUS_ON[$node]}) ; do
+		turn_on_1_led $node $led
+	done
+done
+
+##############################################################################
+# Default mode is to turn on all the LEDs
+##############################################################################
+for node in $nodes ; do
+	turn_on_leds $node ${CPUS_ON[$node]}
+done
+
+##############################################################################
+# Active mode is to loop, checking CPUs in use, turn LEDs on or off to 
+# indicate usage.
+##############################################################################
+if $active_mode ; then
+	while : ; do # forever
+		bugout "Starting CPU usage scan..."
+		for node in $nodes ; do
+			cpus_in_use $node ; in_use=$?
+			if [ ${cpus_used[$node]} -ne $in_use ] ; then
+				turn_on_leds $node $in_use
+				cpus_used[$node]=$in_use
+			fi
+		done
+		$TESTMODE && bomb "Testmode (-t), ending after one cycle"
+		sleep $CYCLE_SECS
+	done
+fi
+
+##############################################################################
+# Only falls through here if not in active mode
+##############################################################################
+exit 0
+

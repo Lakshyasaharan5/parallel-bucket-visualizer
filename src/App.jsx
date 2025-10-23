@@ -3,7 +3,9 @@ import "./App.css";
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
 } from "recharts";
-const CLUSTER_URL = "http://128.235.43.17:8000";
+// GITC 2404 ethernet cable IP: http://128.235.43.17:8000
+// Head node static IP internal cluster: http://192.168.1.1:8000
+const CLUSTER_URL = "http://192.168.1.1:8000";
 
 function App() {
   const [nodes, setNodes] = useState(1);
@@ -39,6 +41,7 @@ function App() {
     const key = `${nodes}-${cores}`;
     const totalCores = nodes * cores;
     const duration = coreTimes[key] || 12;
+    const ledOffDelay = 3000;
 
     if (intervalRef.current) clearInterval(intervalRef.current);
 
@@ -64,7 +67,7 @@ function App() {
     setTimeTaken(null);
 
     // Step 2: Wait 3 sec for LED sync (optional visual delay)
-    await new Promise((r) => setTimeout(r, 3000));
+    await new Promise((r) => setTimeout(r, ledOffDelay));
 
     // Step 3: Start animation
     setTimeout(() => {
@@ -80,19 +83,22 @@ function App() {
           setTimeTaken(duration);
 
           // Step 4: Try turning OFF LEDs — fire and forget
-          (async () => {
-            try {
-              await fetch(`${CLUSTER_URL}/stop`, { method: "POST" });
-            } catch (error) {
-              console.warn("LED stop failed (continuing anyway):", error);
-            }
-          })();
+          setTimeout(() => {
+            (async () => {
+              try {
+                await fetch(`${CLUSTER_URL}/stop`, { method: "POST" });
+              } catch (error) {
+                console.warn("LED stop failed (continuing anyway):", error);
+              }
+            })();
+          }, ledOffDelay); // 3-second delay
+
 
           // Save history
           setHistory((prev) => [...prev, { nodes, cores, totalCores, duration }]);
 
           // Step 5: Re-enable button
-          setIsDisabled(false);
+          setTimeout(() => setIsDisabled(false), ledOffDelay + 1000);
         }
         setFillPercent(progress);
       }, 100);
