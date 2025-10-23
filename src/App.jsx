@@ -298,7 +298,7 @@ function App() {
         }}
       >
         <h2 style={{ fontSize: "2.5rem", marginBottom: "16px", fontWeight: "600" }}>
-          <span style={{ color: "#7c4dff" }}>Infinite cores ∞</span> (Amdahl's Law)
+          <span style={{ color: "#7c1dff" }}>Infinite cores ∞</span> (Amdahl's Law)
         </h2>
 
         <p style={{ marginBottom: "10px" }}>
@@ -318,23 +318,29 @@ function App() {
           <br/>          
           <BlockMath
             math={String.raw`
-              T(\textcolor{#7c4dff}{\infty}) =
+              T(\textcolor{#7c1dff}{\infty}) =
               (0.25 \times 12) +
-              \frac{0.75 \times 12}{\textcolor{#7c4dff}{\infty}}
-              \approx \textcolor{#7c4dff}{3\text{ s}}
+              \frac{0.75 \times 12}{\textcolor{#7c1dff}{\infty}}
+              \approx \textcolor{#7c1dff}{3\text{ s}}
             `}
           />
         </div>
         <br/>
         <p style={{ fontStyle: "monospace", marginTop: "18px" }}>
-          → Parallelism can’t break limits — but HPC engineers can bend them.
+          → Parallelism gives us power; HPC turns that power into performance.
         </p>
-        <p style={{ fontStyle: "monospace", marginTop: "18px" }}>
+        <p style={{ fontStyle: "monospace", marginTop: "18px", color: "#7c1dff", fontSize: "2.5rem" }}>
+          → This curve isn’t the end — it’s the starting point of optimization.
+        </p>
+        <p style={{ fontStyle: "italic", marginTop: "18px" }}>
           → The serial fraction is the ceiling — HPC is how we keep raising it.
         </p>
         <p style={{ fontStyle: "monospace", marginTop: "18px" }}>
           → Even with infinite cores, the challenge is to make the serial part smaller — that’s where real HPC magic begins.
         </p>
+        <p style={{ fontStyle: "italic", marginTop: "18px"}}>
+          → Real HPC work means pushing that curve down.
+        </p>        
       </div>
 
 
