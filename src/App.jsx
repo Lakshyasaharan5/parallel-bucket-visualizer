@@ -3,6 +3,8 @@ import "./App.css";
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
 } from "recharts";
+// GITC 2404 ethernet cable IP: http://128.235.43.17:8000
+// Head node static IP internal cluster: http://192.168.1.1:8000
 const CLUSTER_URL = "http://192.168.1.1:8000";
 
 function App() {
