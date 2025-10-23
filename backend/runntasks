@@ -1,0 +1,33 @@
+#!/bin/bash
+# 23-Oct-2025 /KJW
+set -u
+
+bomb(){
+	echo "${0##*/}: ABTERM--${*:-}" >&2
+	exit 1
+}
+
+[ $# -gt 0 ] || bomb "sbatch [options] submit.sh required"
+[ "$1" = "sbatch" ] && shift
+
+todo="${@}"
+
+while : ; do
+	read -p "Please enter # of tasks or S: " count
+	case "$count" in
+		[1-9]|1[012] ) : ;;
+		0 ) echo "*** A number between 1 and 12 is required" 
+			continue
+			;;
+		''|s|S ) squeue 
+			continue
+			;;
+		* ) echo "*** Got \"$count\" but a number between 1 and 12 is required"
+			continue
+			;;
+	esac
+	cmd="sbatch --ntasks=$count $todo"
+	echo $cmd
+	eval $cmd || bomb "Error from sbatch"
+	squeue # -u $LOGNAME
+done
