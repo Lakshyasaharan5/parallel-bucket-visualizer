@@ -3,6 +3,10 @@ import "./App.css";
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
 } from "recharts";
+import 'katex/dist/katex.min.css';
+import { BlockMath } from 'react-katex';
+
+
 // GITC 2404 ethernet cable IP: http://128.235.43.17:8000
 // Head node static IP internal cluster: http://192.168.1.1:8000
 const CLUSTER_URL = "http://192.168.1.1:8000";
@@ -282,6 +286,167 @@ function App() {
           ))}
         </div>
       </div>
+
+      {/* --- Amdahl’s Law Section --- */}
+      <div style={{ marginTop: "60px", textAlign: "center", fontSize: "2.0rem", lineHeight: "2.2rem" }}>
+        <h2 style={{ fontSize: "2.2rem", marginBottom: "10px" }}>Amdahl's Law</h2>
+        <p>Parallel portion (P): 75% &nbsp;&nbsp;|&nbsp;&nbsp; Serial portion (S): 25%</p>
+        <p>Time = (S × 12) + (P × 12 / N)</p>
+        <p>For infinite cores (N → ∞): Time = (0.25 × 12) + (0.75 × 12 / ∞) ≈ <b>3 seconds</b></p>
+        <p style={{ fontStyle: "italic", marginTop: "10px" }}>
+          → Even with infinite cores, runtime can't go below the serial part.
+        </p>
+      </div>
+
+      {/* --- Amdahl’s Law Section --- */}
+      <div style={{
+        marginTop: "60px",
+        textAlign: "center",
+        fontSize: "1.8rem",
+        lineHeight: "2.4rem",
+        color: "#333",
+        fontWeight: "400"
+      }}>
+        <h2 style={{
+          fontSize: "2.2rem",
+          marginBottom: "18px",
+          fontWeight: "600",
+          color: "#111"
+        }}>
+          Amdahl's Law
+        </h2>
+
+        <p>Parallel portion (P): 75% &nbsp;&nbsp;|&nbsp;&nbsp; Serial portion (S): 25%</p>
+
+        <div style={{ marginTop: "28px" }}>
+          <p style={{ fontWeight: "500", marginBottom: "8px" }}>Formula for total time:</p>
+          <div style={{
+            fontFamily: "monospace",
+            fontSize: "1.6rem",
+            whiteSpace: "pre-line",
+            lineHeight: "2.2rem"
+          }}>
+            {"T(N) = (S × T₁)\n        + (P × T₁ / N)"}
+          </div>
+        </div>
+
+        <div style={{ marginTop: "28px" }}>
+          <p style={{ fontWeight: "500", marginBottom: "8px" }}>For infinite cores:</p>
+          <div style={{
+            fontFamily: "monospace",
+            fontSize: "1.6rem",
+            whiteSpace: "pre-line",
+            lineHeight: "2.2rem"
+          }}>
+            {`T(N) = (0.25 × 12)\n        + (0.75 × 12 / `}
+            <span style={{ color: "#7c4dff" }}>∞</span>
+            {`) ≈ `}
+            <span style={{ color: "#7c4dff", fontWeight: "600" }}>3 seconds</span>
+          </div>
+        </div>
+
+        <p style={{
+          fontStyle: "italic",
+          marginTop: "16px",
+          color: "#444"
+        }}>
+          → Even with infinite cores, runtime can’t go below the serial part.
+        </p>
+      </div>
+
+      {/* --- Amdahl’s Law Section --- */}
+      <div
+        style={{
+          marginTop: "70px",
+          textAlign: "center",
+          fontSize: "1.8rem",
+          lineHeight: "2.6rem",
+          color: "#333", // softer text color, less harsh than black
+        }}
+      >
+        <h2 style={{ fontSize: "2.5rem", marginBottom: "14px", fontWeight: "600" }}>
+          <span style={{ color: "#7c4dff" }}>Infinite cores ∞</span> (Amdahl's Law)
+        </h2>
+
+        <p style={{ marginBottom: "10px" }}>
+          Parallel portion (P): 75% &nbsp;&nbsp;|&nbsp;&nbsp; Serial portion (S): 25%
+        </p>
+
+        {/* Formula - multiline to look like math */}
+        <div
+          style={{
+            marginTop: "25px",
+            display: "inline-block",
+            textAlign: "left",
+            fontFamily: "monospace",
+            fontSize: "2.0rem",
+            lineHeight: "2.2rem",
+          }}
+        >
+          <p style={{ margin: "5px 0" }}>T(N) = (S × T₁) + (P × T₁ / N)</p>
+          <p style={{ margin: "5px 0" }}>T(N) = (0.25 × 12) + (0.75 × 12 / N)</p>
+          <p style={{ margin: "10px 0" }}>
+            T(<span style={{ color: "#7c4dff" }}>∞</span>) = (0.25 × 12) + (0.75 × 12 / <span style={{ color: "#7c4dff" }}>∞</span>)
+            &nbsp;≈&nbsp;
+            <span style={{ color: "#7c4dff", fontWeight: "600" }}>3 seconds</span>
+          </p>
+        </div>
+
+        <p style={{ fontStyle: "italic", marginTop: "18px" }}>
+          → Even with infinite cores, runtime can’t go below the serial part.
+        </p>
+      </div>
+
+      {/* --- Amdahl’s Law Section --- */}
+      <div
+        style={{
+          marginTop: "70px",
+          textAlign: "center",
+          fontSize: "1.8rem",
+          lineHeight: "2.6rem",
+          color: "#333",
+        }}
+      >
+        <h2 style={{ fontSize: "2.5rem", marginBottom: "16px", fontWeight: "600" }}>
+          <span style={{ color: "#7c4dff" }}>Infinite cores ∞</span> (Amdahl's Law)
+        </h2>
+
+        <p style={{ marginBottom: "10px" }}>
+          Parallel portion (P): 75% &nbsp;&nbsp;|&nbsp;&nbsp; Serial portion (S): 25%
+        </p>
+
+        {/* Proper math using KaTeX */}
+        <div
+          style={{
+            marginTop: "25px",
+            display: "inline-block",
+            textAlign: "center",
+            fontSize: "1.8rem",
+          }}
+        >
+          <BlockMath math={String.raw`T(N) = (S \times T_1) + \frac{P \times T_1}{N}`} />
+          <br/>          
+          <BlockMath
+            math={String.raw`
+              T(\textcolor{#7c4dff}{\infty}) =
+              (0.25 \times 12) +
+              \frac{0.75 \times 12}{\textcolor{#7c4dff}{\infty}}
+              \approx \textcolor{#7c4dff}{3\text{ s}}
+            `}
+          />
+        </div>
+        <br/>
+        <p style={{ fontStyle: "monospace", marginTop: "18px" }}>
+          → Parallelism can’t break limits — but HPC engineers can bend them.
+        </p>
+        <p style={{ fontStyle: "monospace", marginTop: "18px" }}>
+          → The serial fraction is the ceiling — HPC is how we keep raising it.
+        </p>
+        <p style={{ fontStyle: "monospace", marginTop: "18px" }}>
+          → Even with infinite cores, the challenge is to make the serial part smaller — that’s where real HPC magic begins.
+        </p>
+      </div>
+
 
     </div>
   );
