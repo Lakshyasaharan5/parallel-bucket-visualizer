@@ -41,6 +41,7 @@ function App() {
     const key = `${nodes}-${cores}`;
     const totalCores = nodes * cores;
     const duration = coreTimes[key] || 12;
+    const ledOffDelay = 3000;
 
     if (intervalRef.current) clearInterval(intervalRef.current);
 
@@ -66,7 +67,7 @@ function App() {
     setTimeTaken(null);
 
     // Step 2: Wait 3 sec for LED sync (optional visual delay)
-    await new Promise((r) => setTimeout(r, 5000));
+    await new Promise((r) => setTimeout(r, ledOffDelay));
 
     // Step 3: Start animation
     setTimeout(() => {
@@ -82,14 +83,6 @@ function App() {
           setTimeTaken(duration);
 
           // Step 4: Try turning OFF LEDs — fire and forget
-          // (async () => {
-          //   try {
-          //     await fetch(`${CLUSTER_URL}/stop`, { method: "POST" });
-          //   } catch (error) {
-          //     console.warn("LED stop failed (continuing anyway):", error);
-          //   }
-          // })();
-          // Step 4: Delay 5 seconds before turning OFF LEDs
           setTimeout(() => {
             (async () => {
               try {
@@ -98,14 +91,14 @@ function App() {
                 console.warn("LED stop failed (continuing anyway):", error);
               }
             })();
-          }, 3000); // 3-second delay
+          }, ledOffDelay); // 3-second delay
 
 
           // Save history
           setHistory((prev) => [...prev, { nodes, cores, totalCores, duration }]);
 
           // Step 5: Re-enable button
-          setIsDisabled(false);
+          setTimeout(() => setIsDisabled(false), ledOffDelay + 1000);
         }
         setFillPercent(progress);
       }, 100);
