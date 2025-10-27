@@ -31,7 +31,7 @@ $ python server.py
 
 ```bash
 $ lux_cpu_leds &
-# weight for few seconds to activate the lights
+# wait for LEDs to complete the activation pattern
 
 $ cd /home/ls565
 # this is where welcome.sh is located
