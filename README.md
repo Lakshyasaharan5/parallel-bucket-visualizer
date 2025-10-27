@@ -61,9 +61,9 @@ $ /usr/local/bin/runntasks welcome.sh
 ## TODO
 
 
-- Fix delay in animation and LEDs toggling.
-- Keep the submit button disabled until everything is done
-- Make the flow robust so it doesn't break when someone clicks so many things at once
-- Check fronted portability on another laptop
-~~
+- <del>Fix delay in animation and LEDs toggling.</del>
+- <del>Keep the submit button disabled until everything is done</del>
+- <del>Make the flow robust so it doesn't break when someone clicks so many things at once</del>
+- <del>Check fronted portability on another laptop</del>
+
 
