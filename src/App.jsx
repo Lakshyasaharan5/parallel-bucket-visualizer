@@ -325,12 +325,17 @@ function App() {
             `}
           />
         </div>
-        <br/>
-        <p style={{ fontStyle: "monospace", marginTop: "18px" }}>
-          → Parallelism gives us power; HPC turns that power into performance.
+        <br/>        
+        <p style={{ fontStyle: "monospace", marginTop: "18px", fontSize: "2.5rem" }}>
+          This curve isn’t the end — it’s the starting point of optimization.           
         </p>
-        <p style={{ fontStyle: "monospace", marginTop: "18px", color: "#7c1dff", fontSize: "2.5rem" }}>
-          → This curve isn’t the end — it’s the starting point of optimization.
+        <p style={{ fontStyle: "italic", marginTop: "18px", color: "#7c1dff", fontSize: "2.5rem" }}>
+          → HPC turns that power into performance.
+        </p>
+        
+        {/* More quotes  */}
+        {/* <p style={{ fontStyle: "monospace", marginTop: "18px" }}>
+          → Parallelism gives us power; HPC turns that power into performance.
         </p>
         <p style={{ fontStyle: "italic", marginTop: "18px" }}>
           → The serial fraction is the ceiling — HPC is how we keep raising it.
@@ -340,7 +345,7 @@ function App() {
         </p>
         <p style={{ fontStyle: "italic", marginTop: "18px"}}>
           → Real HPC work means pushing that curve down.
-        </p>        
+        </p>         */}
       </div>
 
 
